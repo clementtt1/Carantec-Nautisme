@@ -1,32 +1,39 @@
 package com.example.carantecnautisme
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.HttpURLConnection
+import java.net.URL
+
 
 class APIClient {
-    private val BASE_URL: String = "https://dev-restandroid.users.info.unicaen.fr/api"
+    private val URI: String = "https://dev-restandroid.users.info.unicaen.fr/api/"
 
-    private val gson: Gson by lazy {
-        GsonBuilder().setLenient().create()
-    }
+    @OptIn(DelicateCoroutinesApi::class)
+    fun get(record: String, callback: (data: JSONObject) -> Unit) {
+        GlobalScope.launch(Dispatchers.IO) {
+            val url = URL(URI + record)
+            val connection = url.openConnection() as HttpURLConnection
 
-    private val httpClient: OkHttpClient by lazy {
-        OkHttpClient.Builder().build()
-    }
+            if (connection.responseCode == 200) {
+                val inputStream = connection.inputStream
+                val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+                val response = StringBuilder()
 
-    private val retrofit : Retrofit by lazy {
-          Retrofit.Builder()
-            .baseUrl(this.BASE_URL)
-            .client(this.httpClient)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-    }
-
-    val apiService: APIService by lazy {
-      retrofit.create(APIService::class.java)
+                var inputLine: String?
+                while (bufferedReader.readLine().also { inputLine = it } != null) {
+                    response.append(inputLine)
+                }
+                bufferedReader.close()
+                val jsonObject: JSONObject = JSONObject(response.toString())
+                callback(jsonObject)
+            }
+        }
     }
 
 }
