@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">Carantec Nautisme</string>
+    <string name="app_name" translatable="false">Carantec Nautisme</string>
+    <string name="sign_in_title">Inscription d\'un adhérent</string>
+    <string name="licence_label">License</string>
+    <string name="medical_certificate_date">Date de certificat médical</string>
+    <string name="forfait_label">Forfait</string>
+    <string name="level_label">Niveau</string>
+    <string name="lastname_label">Nom</string>
+    <string name="firstname_label">Prenom</string>
+    <string name="email_address_label">Adresse mail</string>
+    <string name="password_label">Mot de passe</string>
+    <string name="confirm_password_label">Mot de passe de confirmation</string>
 </resources>
